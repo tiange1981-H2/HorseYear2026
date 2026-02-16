@@ -131,24 +131,26 @@
     <canvas id="posterCanvas" width="800" height="1200"></canvas>
 
     <script>
+        // 确保数组顺序与 extracted cards (card_01 ~ card_14) 的内容一致
+        // 图片顺序：Row 1 (4), Row 2 (5), Row 3 (5)
         const blessings = [
-            "马到成功，绿氢助力！", "龙马精神，净零未来！", "策马扬鞭，合成绿色新篇！",
-            "马年大吉，绿电氢春！", "志在千里，氢启新程！", "一马当先，碳路领先！",
-            "万马奔腾，零碳远征！", "马力全开，智造绿能！", "跃马争先，共筑青川！",
-            "马踏飞燕，氢风拂面！", "金马迎春，绿电盈门！", "千里马常有，绿氢更长久！",
-            "驰骋未来，零碳表率！", "马年亨通，氢通四海！", "骁腾万里，绿色动力！"
+            "马到成功，绿氢助力！", // 01
+            "龙马精神，净零未来！", // 02
+            "策马扬鞭，合成绿色新篇！", // 03
+            "马年大吉，绿电氢春！", // 04
+            "志在千里，氢启新程！", // 05
+            "一马当先，碳路领先！", // 06
+            "万马奔腾，零碳远征！", // 07
+            "马力全开，智造绿能！", // 08
+            "跃马争先，共筑青川！", // 09
+            "马踏飞燕，氢风拂面！", // 10
+            "千里马常有，绿氢更长久！", // 11
+            "驰骋未来，零碳表率！", // 12
+            "马年亨通，氢通四海！", // 13
+            "骁腾万里，绿色动力！"  // 14
         ];
 
-        // 挑选的高质量科技感背景
-        const backgrounds = [
-            'https://images.unsplash.com/photo-1509391366360-feaf9fa44853?q=80&w=800', // 风电
-            'https://images.unsplash.com/photo-1466611653911-95282fc365d5?q=80&w=800', // 风电2
-            'https://images.unsplash.com/photo-1558449028-b53a39d100fc?q=80&w=800', // 光伏
-            'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800', // 实验室/电解
-            'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?q=80&w=800', // 科技研究
-            'https://images.unsplash.com/photo-1507413245164-6160d8298b31?q=80&w=800', // 加氢站感
-            'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=800'  // 风机
-        ];
+        // 索引对应 0-13
 
         async function generatePoster() {
             const name = document.getElementById('userName').value.trim();
@@ -164,59 +166,76 @@
             const canvas = document.getElementById('posterCanvas');
             const ctx = canvas.getContext('2d');
 
-            const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
-            const randomBgUrl = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+            // 随机选择一个索引 (0 ~ 13)
+            const index = Math.floor(Math.random() * blessings.length);
+            const blessingText = blessings[index];
+            // 图片路径 (注意文件名 card_01.jpg 到 card_14.jpg)
+            const imgIndex = (index + 1).toString().padStart(2, '0');
+            const bgUrl = `assets/cards/card_${imgIndex}.jpg`;
 
             const img = new Image();
-            // 关键：处理跨域图片
             img.crossOrigin = "anonymous";
-            img.src = randomBgUrl;
+            img.src = bgUrl;
 
             img.onload = function () {
                 try {
-                    // 1. 绘制底图
-                    ctx.drawImage(img, 0, 0, 800, 1200);
-
-                    // 2. 绘制深色叠加层（确保文字清晰）
-                    const gradient = ctx.createLinearGradient(0, 0, 0, 1200);
-                    gradient.addColorStop(0, 'rgba(15, 23, 42, 0.4)');
-                    gradient.addColorStop(0.6, 'rgba(15, 23, 42, 0.2)');
-                    gradient.addColorStop(1, 'rgba(15, 23, 42, 0.9)');
-                    ctx.fillStyle = gradient;
+                    // --- 1. 背景填充 (深蓝品牌色) ---
+                    ctx.fillStyle = '#0f172a';
                     ctx.fillRect(0, 0, 800, 1200);
 
-                    // 3. 绘制金色边框装饰
-                    ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
-                    ctx.lineWidth = 15;
-                    ctx.strokeRect(30, 30, 740, 1140);
+                    // --- 2. 绘制卡片 (居中) ---
+                    // 卡片是横版截图，画布是竖版。保持比例绘制。
+                    // 假设卡片比例约 4:3 或 16:9。
+                    // 设定目标宽度 740 (留边 30)，根据比例算高度。
+                    const targetW = 740;
+                    const aspect = img.height / img.width;
+                    const targetH = targetW * aspect;
+                    const targetX = 30;
+                    const targetY = (1200 - targetH) / 2; // 垂直居中
 
-                    // 4. 绘制姓名 (大字、书法感)
+                    // 画个发光底座/阴影提升层次感
+                    ctx.shadowColor = "rgba(16, 185, 129, 0.5)"; // 绿色光晕
+                    ctx.shadowBlur = 40;
+                    ctx.fillStyle = '#1e293b';
+                    ctx.fillRect(targetX - 10, targetY - 10, targetW + 20, targetH + 20);
+                    ctx.shadowBlur = 0; // 重置
+
+                    // 绘制具体图片
+                    ctx.drawImage(img, targetX, targetY, targetW, targetH);
+
+                    // --- 3. 装饰边框 ---
+                    ctx.strokeStyle = 'rgba(251, 191, 36, 0.3)'; // 金色
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(20, 20, 760, 1160);
+
+                    // --- 4. 绘制姓名 (顶部区域) ---
                     ctx.textAlign = 'center';
-                    ctx.fillStyle = '#fbbf24';
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = 'rgba(0,0,0,0.5)';
-                    ctx.font = 'bold 90px serif'; // 回退字体确保可用
-                    ctx.fillText(name, 400, 320);
 
-                    // 5. 绘制祝福语
+                    // "祝" 字
+                    ctx.fillStyle = '#94a3b8'; // 浅灰
+                    ctx.font = '30px "Noto Sans SC"';
+                    ctx.fillText('To:', 400, 150);
+
+                    // 名字
+                    ctx.fillStyle = '#fbbf24'; // 金色
+                    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                    ctx.shadowBlur = 10;
+                    ctx.font = 'bold 80px "Noto Serif SC", serif';
+                    ctx.fillText(name, 400, 240);
+
+                    // --- 5. 底部品牌与Slogan ---
+                    // 图片下方留白区域
+                    const bottomAreaY = targetY + targetH;
+
+                    // Slogan (既然图片上有祝福语，这里写通用的)
                     ctx.shadowBlur = 0;
                     ctx.fillStyle = '#ffffff';
-                    ctx.font = '50px sans-serif';
-                    wrapText(ctx, randomBlessing, 400, 440, 600, 70);
+                    ctx.font = '36px "Noto Sans SC"';
+                    ctx.fillText("马到成功 · 绿氢未来", 400, 1080);
 
-                    // 6. 底部品牌条
-                    ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
-                    ctx.fillRect(30, 1080, 740, 90);
-
-                    // 7. 品牌文字
-                    ctx.textAlign = 'right';
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 36px sans-serif';
-                    ctx.fillText('电氢燃料化学品', 730, 1140);
-
-                    ctx.textAlign = 'left';
-                    ctx.font = '22px monospace';
-                    ctx.fillText('POWER TO X · GREEN HYDROGEN', 60, 1140);
+                    ctx.fillStyle = '#10b981';
+                    ctx.font = '24px monospace';
+                    ctx.fillText('POWER TO X · 2026', 400, 1130);
 
                     // 8. 转化为图片
                     const dataUrl = canvas.toDataURL('image/png');
@@ -234,27 +253,9 @@
             };
 
             img.onerror = function () {
-                alert("背景资源加载失败，请检查网络环境。");
+                alert("背景资源加载失败，请检查网络环境或刷新页面。");
                 location.reload();
             };
-        }
-
-        function wrapText(context, text, x, y, maxWidth, lineHeight) {
-            const words = text.split('');
-            let line = '';
-            for (let n = 0; n < words.length; n++) {
-                let testLine = line + words[n];
-                let metrics = context.measureText(testLine);
-                let testWidth = metrics.width;
-                if (testWidth > maxWidth && n > 0) {
-                    context.fillText(line, x, y);
-                    line = words[n];
-                    y += lineHeight;
-                } else {
-                    line = testLine;
-                }
-            }
-            context.fillText(line, x, y);
         }
     </script>
 </body>
