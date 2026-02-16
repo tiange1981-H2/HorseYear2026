@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>马到成功 · 绿氢未来 - 2026拜年</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入字体 -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Noto+Sans+SC:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --brand-green: #10b981;
+            --brand-blue: #3b82f6;
+            --brand-gold: #fbbf24;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #0f172a;
+            /* 深蓝色背景 */
+            color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calligraphy {
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        .glass-morphism {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #posterCanvas {
+            display: none;
+        }
+
+        .loading-dot {
+            animation: blink 1.4s infinite both;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: .2;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: .2;
+            }
+        }
+
+        /* 确保图片在容器内展示完整 */
+        #finalPoster {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 第一阶段：输入表单 -->
+    <div id="step-input" class="w-full max-w-md p-6 space-y-8 text-center">
+        <div class="space-y-2">
+            <h1 class="text-4xl font-bold tracking-tight text-emerald-400 calligraphy">马年大吉</h1>
+            <p class="text-blue-300 opacity-80 uppercase tracking-widest text-xs">Power to X · 绿色能源未来</p>
+        </div>
+
+        <div class="relative glass-morphism p-8 rounded-3xl space-y-6 shadow-2xl">
+            <div class="space-y-3 text-left">
+                <label class="text-xs font-semibold text-emerald-500 uppercase px-1">您的姓名/昵称</label>
+                <input type="text" id="userName" maxlength="6" placeholder="请输入姓名"
+                    class="w-full bg-slate-900/80 border border-slate-700 rounded-2xl px-4 py-4 text-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all text-center text-white">
+            </div>
+            <button onclick="generatePoster()"
+                class="w-full bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-400 hover:to-blue-500 text-white font-bold py-4 rounded-2xl shadow-lg transform active:scale-95 transition-all text-lg">
+                生成专属海报
+            </button>
+        </div>
+
+        <p class="text-slate-500 text-xs">© 2026 电氢燃料化学品 · 品牌致敬</p>
+    </div>
+
+    <!-- 第二阶段：生成中 -->
+    <div id="step-loading" class="hidden flex flex-col items-center space-y-6">
+        <div class="w-16 h-16 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
+        <div class="text-center">
+            <p class="text-emerald-400 calligraphy text-2xl">正在合成绿色海报</p>
+            <p class="text-slate-500 text-sm mt-2">正在从电解槽提取氢气能量...</p>
+        </div>
+    </div>
+
+    <!-- 第三阶段：结果展示 -->
+    <div id="step-result" class="hidden w-full max-w-md p-4 flex flex-col items-center space-y-6">
+        <div class="relative group">
+            <img id="finalPoster" src="" alt="拜年海报">
+            <div class="mt-4 text-center">
+                <p class="bg-emerald-500/20 text-emerald-400 px-4 py-2 rounded-full text-sm inline-block animate-pulse">
+                    💡 长按上方图片保存到相册
+                </p>
+            </div>
+        </div>
+
+        <button onclick="location.reload()"
+            class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-3 rounded-xl transition-all flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            换个样式重新生成
+        </button>
+    </div>
+
+    <canvas id="posterCanvas" width="800" height="1200"></canvas>
+
+    <script>
+        const blessings = [
+            "马到成功，绿氢助力！", "龙马精神，净零未来！", "策马扬鞭，合成绿色新篇！",
+            "马年大吉，绿电氢春！", "志在千里，氢启新程！", "一马当先，碳路领先！",
+            "万马奔腾，零碳远征！", "马力全开，智造绿能！", "跃马争先，共筑青川！",
+            "马踏飞燕，氢风拂面！", "金马迎春，绿电盈门！", "千里马常有，绿氢更长久！",
+            "驰骋未来，零碳表率！", "马年亨通，氢通四海！", "骁腾万里，绿色动力！"
+        ];
+
+        // 挑选的高质量科技感背景
+        const backgrounds = [
+            'https://images.unsplash.com/photo-1509391366360-feaf9fa44853?q=80&w=800', // 风电
+            'https://images.unsplash.com/photo-1466611653911-95282fc365d5?q=80&w=800', // 风电2
+            'https://images.unsplash.com/photo-1558449028-b53a39d100fc?q=80&w=800', // 光伏
+            'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800', // 实验室/电解
+            'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?q=80&w=800', // 科技研究
+            'https://images.unsplash.com/photo-1507413245164-6160d8298b31?q=80&w=800', // 加氢站感
+            'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=800'  // 风机
+        ];
+
+        async function generatePoster() {
+            const name = document.getElementById('userName').value.trim();
+            if (!name) {
+                alert("请输入您的姓名");
+                return;
+            }
+
+            // 切换到加载状态
+            document.getElementById('step-input').classList.add('hidden');
+            document.getElementById('step-loading').classList.remove('hidden');
+
+            const canvas = document.getElementById('posterCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
+            const randomBgUrl = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+
+            const img = new Image();
+            // 关键：处理跨域图片
+            img.crossOrigin = "anonymous";
+            img.src = randomBgUrl;
+
+            img.onload = function () {
+                try {
+                    // 1. 绘制底图
+                    ctx.drawImage(img, 0, 0, 800, 1200);
+
+                    // 2. 绘制深色叠加层（确保文字清晰）
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 1200);
+                    gradient.addColorStop(0, 'rgba(15, 23, 42, 0.4)');
+                    gradient.addColorStop(0.6, 'rgba(15, 23, 42, 0.2)');
+                    gradient.addColorStop(1, 'rgba(15, 23, 42, 0.9)');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, 800, 1200);
+
+                    // 3. 绘制金色边框装饰
+                    ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
+                    ctx.lineWidth = 15;
+                    ctx.strokeRect(30, 30, 740, 1140);
+
+                    // 4. 绘制姓名 (大字、书法感)
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#fbbf24';
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+                    ctx.font = 'bold 90px serif'; // 回退字体确保可用
+                    ctx.fillText(name, 400, 320);
+
+                    // 5. 绘制祝福语
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '50px sans-serif';
+                    wrapText(ctx, randomBlessing, 400, 440, 600, 70);
+
+                    // 6. 底部品牌条
+                    ctx.fillStyle = 'rgba(16, 185, 129, 0.9)';
+                    ctx.fillRect(30, 1080, 740, 90);
+
+                    // 7. 品牌文字
+                    ctx.textAlign = 'right';
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 36px sans-serif';
+                    ctx.fillText('电氢燃料化学品', 730, 1140);
+
+                    ctx.textAlign = 'left';
+                    ctx.font = '22px monospace';
+                    ctx.fillText('POWER TO X · GREEN HYDROGEN', 60, 1140);
+
+                    // 8. 转化为图片
+                    const dataUrl = canvas.toDataURL('image/png');
+                    const finalImg = document.getElementById('finalPoster');
+                    finalImg.src = dataUrl;
+
+                    // 显示结果
+                    document.getElementById('step-loading').classList.add('hidden');
+                    document.getElementById('step-result').classList.remove('hidden');
+                } catch (e) {
+                    console.error(e);
+                    alert("海报生成失败，请检查网络连接或尝试使用其他姓名。");
+                    location.reload();
+                }
+            };
+
+            img.onerror = function () {
+                alert("背景资源加载失败，请检查网络环境。");
+                location.reload();
+            };
+        }
+
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+            const words = text.split('');
+            let line = '';
+            for (let n = 0; n < words.length; n++) {
+                let testLine = line + words[n];
+                let metrics = context.measureText(testLine);
+                let testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    context.fillText(line, x, y);
+                    line = words[n];
+                    y += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            context.fillText(line, x, y);
+        }
+    </script>
+</body>
+
+</html>
